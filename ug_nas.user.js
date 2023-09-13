@@ -1,3 +1,12 @@
+// ==UserScript==
+// @name         ugreen nas
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
+// @author       BarryChen
+// @match        https://cloud.ugnas.com/*
+// @grant        none
+// ==/UserScript==
 
 (function () {
     'use strict';
@@ -24,38 +33,29 @@
     const previewImage = (e) => {
         e.target.classList.add('hadPreview');
         const img = e.target;
+        let preview = null;
+        let pos = null;
+        let thisDoc =null;
         if (commandDown) {
             //基于整个浏览器窗口,固定位置展示大图
-            const ownerDocument = getOwnerDocument(document);
-            const preview = ownerDocument.createElement('img');
-            preview.src = img.src.replace('SMALL', 'LARGE');
-            preview.className = 'preview';
-            preview.style.position = 'absolute';
-
-            let pos = calcFixedPreviewPos(e);
-            preview.style.left = pos.x + 'px';
-            preview.style.top = pos.y + 'px';
-            preview.style.height = pos.preHeight + 'px';
-            preview.style.width = pos.preWidth + 'px';
-            preview.style.zIndex = 9000;
-
-            ownerDocument.body.appendChild(preview);
+            thisDoc = getOwnerDocument(document);
+            pos = calcFixedPreviewPos(e);
         } else {
             //基于文件管理器iframe,跟随鼠标,展示大图
-            const preview = document.createElement('img');
-            preview.src = img.src.replace('SMALL', 'LARGE');
-            preview.className = 'preview';
-            preview.style.position = 'absolute';
-
-            let pos = calcFlexiblePreviewPos(e);
-            preview.style.left = pos.x + 'px';
-            preview.style.top = pos.y + 'px';
-            preview.style.height = pos.preHeight + 'px';
-            preview.style.width = pos.preWidth + 'px';
-            preview.style.zIndex = 9000;
-
-            document.body.appendChild(preview);
+            pos = calcFlexiblePreviewPos(e);
+            thisDoc = document;
         }
+        preview = thisDoc.createElement('img');
+        preview.src = img.src.replace('SMALL', 'LARGE');
+        preview.className = 'preview';
+        preview.style.position = 'absolute';
+        preview.style.left = pos.x + 'px';
+        preview.style.top = pos.y + 'px';
+        preview.style.height = pos.preHeight + 'px';
+        preview.style.width = pos.preWidth + 'px';
+        preview.style.zIndex = 9000;
+        preview.style.boxShadow = '0px 0px 20px 0px black';
+        thisDoc.body.appendChild(preview);
     };
 
     const removePreview = () => {
@@ -129,8 +129,8 @@
      */
     function calcFixedPreviewPos(e) {
         const img = e.target;
-        let x = 0;
-        let y = 0;
+        let x = 10;
+        let y = 10;
         
         // 窗口大小
         const parentWindow = document.defaultView.parent
@@ -139,13 +139,17 @@
         // 计算预览图大小
         let preWidth = 0;
         let preHeight = 0;
-        const maxHeight = winHeight;
-        const maxWidth = Math.min(900, winWidth * 0.48);
+        const maxHeight = winHeight-20;
+        const maxWidth =  winWidth * 0.48;
         const imageHeight = img.offsetHeight;
         const imageWidth = img.offsetWidth;
         if (imageHeight > imageWidth) {
             preHeight = maxHeight;
             preWidth = preHeight * imageWidth / imageHeight;
+            if(preWidth >= maxWidth){
+                preWidth = maxWidth;
+                preHeight = preWidth * imageHeight / imageWidth;    
+            }
         } else {
             preWidth = maxWidth;
             preHeight = preWidth * imageHeight / imageWidth;
@@ -160,8 +164,8 @@
         const mouseInWindowX = e.pageX + iframeX;
         const mouseInWindowY = e.pageY + iframeY;
 
-        //如果图片4个点的坐标覆盖了鼠标位置,则调整预览图的位置,以此尝试左上角,左下角,右上角,右下角.
-        if (mouseInWindowX < preWidth) {
+        //如果图片4个点的坐标覆盖了鼠标位置,则调整预览图x坐标位置.
+        if (mouseInWindowX < x+preWidth && mouseInWindowX > x) {
             x = winWidth - preWidth;
         }
         return { x, y, preWidth, preHeight }
