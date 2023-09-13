@@ -2,14 +2,17 @@
 
 只适配了`Tampermonkey`
 
-## ug_nas.js
-[install](https://raw.githubusercontent.com/cp19890714/userscript/master/ug_nas.user.js)
+## ug_nas.user.js
+
+[click here to install](https://raw.githubusercontent.com/cp19890714/userscript/master/ug_nas.user.js)
+
 * 文件管理器优化
-  * 鼠标指向图片时,在文件管理器内展示图片的LARGE缩略图,而不是默认的SMALL缩略图, 图片大小为64KB, 可以几乎无延迟加载. 图片位置跟随鼠标位置自动调整, 防止遮挡.
+  * 鼠标指向图片时,在文件管理器内展示图片的LARGE缩略图,而不是默认的SMALL缩略图, 图片大小为60KB-100KB左右, 可以几乎无延迟加载. 图片位置跟随鼠标位置自动调整, 防止遮挡.
   * 按住Command案件,鼠标指向图片时,在整个浏览器窗口展示图片的LARGE缩略图, 图片尺寸更大. 图片位置跟随鼠标位置自动调整, 防止遮挡.
 
-## sites_clear.js
-[install](https://raw.githubusercontent.com/cp19890714/userscript/master/sites_clear.user.js)
+## sites_clear.user.js
+
+[click here to install](https://raw.githubusercontent.com/cp19890714/userscript/master/sites_clear.user.js)
 
 ### 云效
 * 在需求页面的关联代码上,展示代码库名字.

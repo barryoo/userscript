@@ -6,6 +6,7 @@
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
 // @grant        none
+// @homepageURL  https://github.com/cp19890714/userscript
 // ==/UserScript==
 
 (function () {
