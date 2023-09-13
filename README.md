@@ -4,7 +4,8 @@
 
 ## ug_nas.user.js
 
-[click here to install](https://raw.githubusercontent.com/cp19890714/userscript/master/ug_nas.user.js)
+[install from github](https://raw.githubusercontent.com/cp19890714/userscript/master/ug_nas.user.js)
+[install from Greasy Fork](https://greasyfork.org/zh-CN/scripts/475230-ugreen-nas)
 
 * 文件管理器优化
   * 鼠标指向图片时,在文件管理器内展示图片的LARGE缩略图,而不是默认的SMALL缩略图, 图片大小为60KB-100KB左右, 可以几乎无延迟加载. 图片位置跟随鼠标位置自动调整, 防止遮挡.
@@ -12,7 +13,7 @@
 
 ## sites_clear.user.js
 
-[click here to install](https://raw.githubusercontent.com/cp19890714/userscript/master/sites_clear.user.js)
+[install from github](https://raw.githubusercontent.com/cp19890714/userscript/master/sites_clear.user.js)
 
 ### 云效
 * 在需求页面的关联代码上,展示代码库名字.
