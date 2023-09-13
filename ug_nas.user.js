@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ugreen nas
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
@@ -47,7 +47,7 @@
             thisDoc = document;
         }
         preview = thisDoc.createElement('img');
-        preview.src = img.src.replace('SMALL', 'LARGE');
+        preview.src = img.getAttribute('data-src').replace('SMALL', 'LARGE');
         preview.className = 'preview';
         preview.style.position = 'absolute';
         preview.style.left = pos.x + 'px';
