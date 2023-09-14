@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ugreen nas
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
@@ -12,6 +12,45 @@
 (function () {
     'use strict';
 
+    (function imageSizeIncrease(){
+        document.querySelector('style').innerHTML +=`
+        .horizontal-item[data-v-39b53426] {
+            width: auto !important;
+            margin: 0px 0px !important;
+            overflow: auto !important;
+            border: 0px !important;
+        }
+        .horizontal-item .name-wrapper[data-v-39b53426] {
+            margin-top: 0px !important;
+        }
+        .horizontal-item .icon-wrapper[data-v-39b53426] {
+            margin-top: 0px !important;
+        }
+        
+        .horizontal-item .icon-wrapper img.thumbs[lazy=loaded][data-v-39b53426] {
+            /*     max-height: 100% !important; */
+            max-width: 100% !important;
+            max-height: unset !important;
+            border: 1px solid var(--mainPanelColor) !important;
+        }
+        
+        .virtual-item[data-v-760eafcf] {
+            flex: auto !important;
+        }
+        
+        .horizontal-item .icon-wrapper.thumbs[data-v-39b53426] {
+            height: auto !important;
+        }
+        
+        .horizontal-item .name-wrapper[data-v-39b53426] {
+            height: 20px !important;
+        }
+        .size {
+            display: block !important;
+        }
+        `
+    })();
+    
     // 是否按下了 command/alt 键
     let commandDown = false;
 
