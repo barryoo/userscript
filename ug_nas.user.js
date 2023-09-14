@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ugreen nas
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
@@ -12,12 +12,12 @@
 (function () {
     'use strict';
 
-    // 是否按下了 command 键
+    // 是否按下了 command/alt 键
     let commandDown = false;
 
-    // 按下 command 键触发
+    // 按下 command/alt 键触发
     document.addEventListener('keydown', e => {
-        if (e.key === 'Meta') {
+        if (e.key === 'Meta' || e.key === 'Alt') {
             commandDown = true;
             console.log('command down');
         }
@@ -25,7 +25,7 @@
 
     // 松开 command 键触发
     document.addEventListener('keyup', e => {
-        if (e.key === 'Meta') {
+        if (e.key === 'Meta' || e.key === 'Alt') {
             commandDown = false;
             console.log('command up');
         }
