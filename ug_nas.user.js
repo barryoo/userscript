@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ugreen nas
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4-SNAPSHOT
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
@@ -12,8 +12,9 @@
 (function () {
     'use strict';
 
-    (function imageSizeIncrease(){
-        document.querySelector('style').innerHTML +=`
+    //通过样式修改图片列表中图片的默认尺寸
+    (function imageSizeIncrease() {
+        document.querySelector('style').innerHTML += `
         .horizontal-item[data-v-39b53426] {
             width: auto !important;
             margin: 0px 0px !important;
@@ -50,7 +51,7 @@
         }
         `
     })();
-    
+
     // 是否按下了 command/alt 键
     let commandDown = false;
 
@@ -75,7 +76,7 @@
         const img = e.target;
         let preview = null;
         let pos = null;
-        let thisDoc =null;
+        let thisDoc = null;
         if (commandDown) {
             //基于整个浏览器窗口,固定位置展示大图
             thisDoc = getOwnerDocument(document);
@@ -162,7 +163,6 @@
         return { x, y, preWidth, preHeight };
     }
 
-
     /**
      * 计算基于整个浏览器窗口的位置固定的 预览大图的位置和大小
      * @param {Event} e 
@@ -171,7 +171,7 @@
         const img = e.target;
         let x = 10;
         let y = 10;
-        
+
         // 窗口大小
         const parentWindow = document.defaultView.parent
         const winWidth = parentWindow.innerWidth;
@@ -179,22 +179,22 @@
         // 计算预览图大小
         let preWidth = 0;
         let preHeight = 0;
-        const maxHeight = winHeight-20;
-        const maxWidth =  winWidth * 0.48;
+        const maxHeight = winHeight - 20;
+        const maxWidth = winWidth * 0.48;
         const imageHeight = img.offsetHeight;
         const imageWidth = img.offsetWidth;
         if (imageHeight > imageWidth) {
             preHeight = maxHeight;
             preWidth = preHeight * imageWidth / imageHeight;
-            if(preWidth >= maxWidth){
+            if (preWidth >= maxWidth) {
                 preWidth = maxWidth;
-                preHeight = preWidth * imageHeight / imageWidth;    
+                preHeight = preWidth * imageHeight / imageWidth;
             }
         } else {
             preWidth = maxWidth;
             preHeight = preWidth * imageHeight / imageWidth;
         }
-        
+
         //获取iframe的位置
         const iframe = getOwnerDocument(document).querySelector('iframe');
         const iframeRect = iframe.getBoundingClientRect();
@@ -205,7 +205,7 @@
         const mouseInWindowY = e.pageY + iframeY;
 
         //如果图片4个点的坐标覆盖了鼠标位置,则调整预览图x坐标位置.
-        if (mouseInWindowX < x+preWidth && mouseInWindowX > x) {
+        if (mouseInWindowX < x + preWidth && mouseInWindowX > x) {
             x = winWidth - preWidth;
         }
         return { x, y, preWidth, preHeight }
@@ -220,12 +220,74 @@
         return iframeDocument.defaultView.parent.document;
     }
 
-    setInterval(function () {
-        document.querySelectorAll('img.thumbs').forEach(img => {
-            if (!img.classList.contains('hadPreview')) {
-                img.addEventListener('mouseover', previewImage);
-                img.addEventListener('mouseout', removePreview);
+    // setInterval(function () {
+    //     document.querySelectorAll('img.thumbs').forEach(img => {
+    //         if (!img.classList.contains('hadPreview')) {
+    //             img.addEventListener('mouseover', previewImage);
+    //             img.addEventListener('mouseout', removePreview);
+    //         }
+    //     });
+    // }, 1000);
+
+    //通过定时器来检测是否打开了fileManage.
+    //由于无法跨域为iframe中的元素添加Observer,导致无法通过Observer来监听打开了fileManage.只能通过定时器实现.
+    // setInterval(() => {
+    //     //找到需要观察的元素: flieManage中文件列表,class=virtual-list-container. 如果已经添加过观察器,则不再添加
+    //     const fileListEle = document.querySelectorAll(".resource-list-layout .virtual-list-container:not(.hadPreviewObserver)");
+    //     if (!fileListEle || !fileListEle[0]) return
+    //     const fileListEle1 = fileListEle[0];
+    //     const observer = new MutationObserver(mutations => {
+    //         for (const mutation of mutations) {
+    //             mutation.addedNodes.forEach(node => {
+    //                 if (node.nodeType != 1) return
+    //                 const imgs = node.querySelectorAll("img.thumbs")
+    //                 if (!imgs || imgs.length === 0) return
+    //                 //为图片添加预览事件
+    //                 imgs.forEach(i => { i.addEventListener('mouseover', previewImage); i.addEventListener('mouseout', removePreview); })
+    //             })
+    //         }
+    //     });
+    //     observer.observe(fileListEle1, { childList: true, subtree: true, attributes: true })
+    //     fileListEle1.classList.add('hadPreviewObserver');
+    // }, 2000);
+
+    //监控打开了fileManage
+    const observer = new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+            mutation.addedNodes.forEach(node => {
+                //找到cloud-window-main, 然后找到fileManage
+                if (node.nodeName != "DIV" || !node.classList.contains('cloud-window-main' || node.classList.contains('hadPreviewObserver'))) return
+                const iframe = node.querySelector('iframe[name="fileManage"]');
+                getIframeDocument(iframe).then(doc => {
+                    //监控打开了resource-list-layout
+                    const childObserver = new MutationObserver(mutations => {
+                        for (const mutation of mutations) {
+                            mutation.addedNodes.forEach(node => {
+                                if (node.nodeType != 1) return
+                                const imgs = node.querySelectorAll("img.thumbs")
+                                if (!imgs || imgs.length === 0) return
+                                //为图片添加预览事件
+                                imgs.forEach(i => { i.addEventListener('mouseover', previewImage); i.addEventListener('mouseout', removePreview); })
+                            })
+                        }
+                    })
+                    childObserver.observe(doc.body, { childList: true, subtree: true })
+                    node.classList.add('hadPreviewObserver');
+                })
+            })
+        }
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    function getIframeDocument(iframe) {
+        return new Promise(resolve => {
+            if (iframe.contentDocument.body) {
+                resolve(iframe.contentDocument);
+            } else {
+                iframe.addEventListener('load', e => {
+                    resolve(iframe.contentDocument);
+                });
             }
         });
-    }, 1000);
+    }
 })();
