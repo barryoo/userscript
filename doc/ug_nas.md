@@ -1,3 +1,5 @@
+
+## 说明
 对绿联云NAS界面增强
 * 文件管理器图片展示优化
   * 图片列表:增加图片尺寸.
@@ -5,3 +7,9 @@
   * 按住`Command/Alt`,鼠标指向图片时,在整个浏览器窗口展示图片的LARGE缩略图, 图片尺寸更大. 图片位置跟随鼠标位置自动调整, 防止遮挡.
 
 github: [https://github.com/cp19890714/userscript/tree/master](https://github.com/cp19890714/userscript/tree/master)
+
+
+## 更新日志
+
+* v0.1.4 2023-09-16
+  * 使用`MutationObserver`替换`setInterval`监听DOM变化

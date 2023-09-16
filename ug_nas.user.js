@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ugreen nas
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4-SNAPSHOT
+// @version      0.1.4
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
@@ -220,74 +220,23 @@
         return iframeDocument.defaultView.parent.document;
     }
 
-    // setInterval(function () {
-    //     document.querySelectorAll('img.thumbs').forEach(img => {
-    //         if (!img.classList.contains('hadPreview')) {
-    //             img.addEventListener('mouseover', previewImage);
-    //             img.addEventListener('mouseout', removePreview);
-    //         }
-    //     });
-    // }, 1000);
-
-    //通过定时器来检测是否打开了fileManage.
-    //由于无法跨域为iframe中的元素添加Observer,导致无法通过Observer来监听打开了fileManage.只能通过定时器实现.
-    // setInterval(() => {
-    //     //找到需要观察的元素: flieManage中文件列表,class=virtual-list-container. 如果已经添加过观察器,则不再添加
-    //     const fileListEle = document.querySelectorAll(".resource-list-layout .virtual-list-container:not(.hadPreviewObserver)");
-    //     if (!fileListEle || !fileListEle[0]) return
-    //     const fileListEle1 = fileListEle[0];
-    //     const observer = new MutationObserver(mutations => {
-    //         for (const mutation of mutations) {
-    //             mutation.addedNodes.forEach(node => {
-    //                 if (node.nodeType != 1) return
-    //                 const imgs = node.querySelectorAll("img.thumbs")
-    //                 if (!imgs || imgs.length === 0) return
-    //                 //为图片添加预览事件
-    //                 imgs.forEach(i => { i.addEventListener('mouseover', previewImage); i.addEventListener('mouseout', removePreview); })
-    //             })
-    //         }
-    //     });
-    //     observer.observe(fileListEle1, { childList: true, subtree: true, attributes: true })
-    //     fileListEle1.classList.add('hadPreviewObserver');
-    // }, 2000);
-
-    //监控打开了fileManage
-    const observer = new MutationObserver(mutations => {
-        for (const mutation of mutations) {
-            mutation.addedNodes.forEach(node => {
-                //找到cloud-window-main, 然后找到fileManage
-                if (node.nodeName != "DIV" || !node.classList.contains('cloud-window-main' || node.classList.contains('hadPreviewObserver'))) return
-                const iframe = node.querySelector('iframe[name="fileManage"]');
-                getIframeDocument(iframe).then(doc => {
-                    //监控打开了resource-list-layout
-                    const childObserver = new MutationObserver(mutations => {
-                        for (const mutation of mutations) {
-                            mutation.addedNodes.forEach(node => {
-                                if (node.nodeType != 1) return
-                                const imgs = node.querySelectorAll("img.thumbs")
-                                if (!imgs || imgs.length === 0) return
-                                //为图片添加预览事件
-                                imgs.forEach(i => { i.addEventListener('mouseover', previewImage); i.addEventListener('mouseout', removePreview); })
-                            })
-                        }
-                    })
-                    childObserver.observe(doc.body, { childList: true, subtree: true })
-                    node.classList.add('hadPreviewObserver');
-                })
-            })
+    window.onload = function () {
+        console.log('页面加载完成')
+        if(document.URL.indexOf('#/file-manager')<0){
+            return;
         }
-    })
-    observer.observe(document.body, { childList: true, subtree: true })
-
-    function getIframeDocument(iframe) {
-        return new Promise(resolve => {
-            if (iframe.contentDocument.body) {
-                resolve(iframe.contentDocument);
-            } else {
-                iframe.addEventListener('load', e => {
-                    resolve(iframe.contentDocument);
-                });
+        const observer = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType != 1) return
+                    const imgs = node.querySelectorAll("img.thumbs")
+                    if (!imgs || imgs.length === 0) return
+                    //为图片添加预览事件
+                    imgs.forEach(i => { i.addEventListener('mouseover', previewImage); i.addEventListener('mouseout', removePreview); })
+                })
             }
-        });
+        })
+        observer.observe(document.body, { childList: true, subtree: true })
     }
+
 })();
