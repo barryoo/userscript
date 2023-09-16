@@ -5,6 +5,8 @@
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @match        https://cloud.ugnas.com/*
+// @updateURL    https://github.com/cp19890714/userscript/raw/master/ug_nas.user.js
+// @downloadURL  https://github.com/cp19890714/userscript/raw/master/ug_nas.user.js
 // @grant        none
 // @homepageURL  https://github.com/cp19890714/userscript
 // ==/UserScript==
