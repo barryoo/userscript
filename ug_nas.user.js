@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ugreen nas
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  对绿联网页版增强. 也可用于IP直连模式,需要自己配置@match
 // @author       BarryChen
 // @updateURL    https://github.com/cp19890714/userscript/raw/master/ug_nas.user.js
@@ -224,7 +224,7 @@
 
     window.onload = function () {
         console.log('页面加载完成')
-        if(document.URL.indexOf('#/file-manager')<0){
+        if(document.URL.indexOf('#/file-manage')<0){
             return;
         }
         const observer = new MutationObserver(mutations => {
